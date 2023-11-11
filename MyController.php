@@ -1,14 +1,16 @@
 <?php
 
+
 trait DBConfig {
     protected $host = 'localhost';
+    protected $port = '3306';
     protected $dbname = 'Skilledin';
     protected $username = 'root';
     protected $password = '';
 
     public function connect() {
         try {
-            $db = new PDO("mysql:host={$this->host};dbname={$this->dbname}", $this->username, $this->password);
+            $db = new PDO("mysql:host={$this->host};port={$this->port};dbname={$this->dbname}", $this->username, $this->password);
             $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
             return $db;
         } catch (PDOException $e) {
@@ -16,6 +18,7 @@ trait DBConfig {
         }
     }
 }
+
 
 class Model {
     use DBConfig;
