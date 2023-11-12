@@ -3,10 +3,10 @@
 
 trait DBConfig {
     protected $host = 'localhost';
-    protected $port = '3306';
+    protected $port = '8889';
     protected $dbname = 'Skilledin';
     protected $username = 'root';
-    protected $password = '';
+    protected $password = 'root';
 
     public function connect() {
         try {
@@ -180,7 +180,7 @@ class Model {
 
     public function getAllEntry() {
         $db = $this->connect();
-        $stmt = $db->query("SELECT et.hours, et.description, et.date, pr.project_name, tk.task_name FROM entry as et LEFT JOIN projects as pr on pr.project_id = et.project_id LEFT JOIN tasks as tk on tk.task_id = et.task_id");
+        $stmt = $db->query("SELECT et.hours, et.description, et.date, et.project_id, pr.project_name, tk.task_name FROM entry as et LEFT JOIN projects as pr on pr.project_id = et.project_id LEFT JOIN tasks as tk on tk.task_id = et.task_id");
         $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
         return $data;
     }
@@ -188,6 +188,19 @@ class Model {
     public function getProjectHours() {
         $db = $this->connect();
         $stmt = $db->query("SELECT et.project_id, pr.project_name, SUM(hours) AS total_hours FROM entry as et LEFT JOIN projects as pr on pr.project_id = et.project_id GROUP BY et.project_id");
+        $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        return $data;
+    }
+
+    public function getProjectTask($projectId) {
+        $db = $this->connect();
+        $stmt = $db->query("SELECT et.*, ts.task_name FROM entry as et LEFT JOIN tasks as ts on ts.task_id = et.task_id WHERE et.project_id = $projectId");
+        $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        return $data;
+    }
+    public function projectGroup() {
+        $db = $this->connect();
+        $stmt = $db->query("SELECT et.hours, et.description, et.date, et.project_id, pr.project_name, tk.task_name FROM entry as et LEFT JOIN projects as pr on pr.project_id = et.project_id LEFT JOIN tasks as tk on tk.task_id = et.task_id GROUP BY et.project_id");
         $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
         return $data;
     }
